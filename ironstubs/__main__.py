@@ -27,11 +27,11 @@ import sys
 import os
 import json
 
-from utils.docopt import docopt
-from utils.logger import logger
-from utils.helper import Timer
-from default_settings import PATHS, BUILTINS, ASSEMBLIES
-from make_stubs import make, dump_json_log
+from .utils.docopt import docopt
+from .utils.logger import logger
+from .utils.helper import Timer
+from .default_settings import PATHS, BUILTINS, ASSEMBLIES
+from .make_stubs import make, dump_json_log
 
 __version__ = '1.0.0'
 __doc__ = """
@@ -41,16 +41,16 @@ __doc__ = """
 
     Usage:
       ironstubs --help
-      ironstubs make (<assembly-name>|--all) [options]
+      ironstubs make (<assembly-name> | --all) [options]
       ironstubs minify <folder> [options]
 
     Examples:
-      ipy -m ironstubs RhinoCommon --overwrite
+      ipy -m ironstubs make RhinoCommon --overwrite
 
     Options:
         <assembly-name>         Name of Dll Assembly to load
         --all                   Process all Assemblies in the default_settings.py
-
+        
         --output=<dir>          Name of Output Directory [default: {out_dir}]
         --path=<dir>            Additional Directory to add to Path [default: ]
         --overwrite             Force Overwrite if stub already exists [default: False].

@@ -31,17 +31,17 @@ if version[0] >= 3:
         exec (source, context)
 
 else: # < 3.0
-    import __builtin__ as the_builtins
+    import builtins as the_builtins
 
     STR_TYPES = (getattr(the_builtins, "unicode"), str)
 
-    NUM_TYPES = (int, long, float)
-    SIMPLEST_TYPES = NUM_TYPES + STR_TYPES + (types.NoneType,)
-    EASY_TYPES = NUM_TYPES + STR_TYPES + (types.NoneType, dict, tuple, list)
+    NUM_TYPES = (int, int, float)
+    SIMPLEST_TYPES = NUM_TYPES + STR_TYPES + (type(None),)
+    EASY_TYPES = NUM_TYPES + STR_TYPES + (type(None), dict, tuple, list)
 
     def the_exec(source, context):
         #noinspection PyRedundantParentheses
-        exec (source) in context
+        exec((source), context)
 
 if version[0] == 2 and version[1] < 4:
     HAS_DECORATORS = False
@@ -138,7 +138,7 @@ if version[0] < 3:
     def ensureUnicode(data):
         if type(data) == str:
             return data.decode(OUT_ENCODING, 'replace')
-        return unicode(data)
+        return str(data)
 else:
     UNICODE_LIT = '""'
     BYTES_LIT = 'b""'
@@ -224,17 +224,17 @@ SIMPLE_VALUE_RE = re.compile(
 
 ###########################   parsing   ###########################################################
 if version[0] < 3:
-    from pyparsing import *
+    from .pyparsing import *
 else:
     #noinspection PyUnresolvedReferences
-    from pyparsing_py3 import *
+    from .pyparsing_py3 import *
 
 # grammar to parse parameter lists
 
 # // snatched from parsePythonValue.py, from pyparsing samples, copyright 2006 by Paul McGuire but under BSD license.
 # we don't suppress lots of punctuation because we want it back when we reconstruct the lists
 
-lparen, rparen, lbrack, rbrack, lbrace, rbrace, colon = map(Literal, "()[]{}:")
+lparen, rparen, lbrack, rbrack, lbrace, rbrace, colon = list(map(Literal, "()[]{}:"))
 
 integer = Combine(Optional(oneOf("+ -")) + Word(nums)).setName("integer")
 real = Combine(Optional(oneOf("+ -")) + Word(nums) + "." +

@@ -5,10 +5,10 @@ import shutil
 
 # TODO: Move all CLR-specific functions to clr_tools
 
-from pycharm_generator_utils.module_redeclarator import *
-from pycharm_generator_utils.util_methods import *
-from pycharm_generator_utils.constants import *
-from pycharm_generator_utils.clr_tools import *
+from .pycharm_generator_utils.module_redeclarator import *
+from .pycharm_generator_utils.util_methods import *
+from .pycharm_generator_utils.constants import *
+from .pycharm_generator_utils.clr_tools import *
 
 
 debug_mode = False
@@ -291,7 +291,7 @@ def process_one(name, mod_file_name, doing_builtins, subdir, quiet=False):
         if my_finder:
             sys.meta_path.remove(my_finder)
         if imported_module_names is None:
-            imported_module_names = [m for m in sys.modules.keys() if m not in old_modules]
+            imported_module_names = [m for m in list(sys.modules.keys()) if m not in old_modules]
 
         redo_module(name, fname, mod_file_name, doing_builtins)
         # The C library may have called Py_InitModule() multiple times to define several modules (gtk._gtk and gtk.gdk);
@@ -299,7 +299,7 @@ def process_one(name, mod_file_name, doing_builtins, subdir, quiet=False):
         path = name.split(".")
         redo_imports = not ".".join(path[:-1]) in MODULES_INSPECT_DIR
         if imported_module_names and redo_imports:
-            for m in sys.modules.keys():
+            for m in list(sys.modules.keys()):
                 if m.startswith("pycharm_generator_utils"): continue
                 action("looking at possible submodule %r", m)
                 # if module has __file__ defined, it has Python source code and doesn't need a skeleton

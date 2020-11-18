@@ -36,8 +36,8 @@ import System
 
 # Ensure Proper CWD is set. This ensure proper running from within Revit
 # os.chdir(os.path.dirname(__file__))
-from utils.logger import logger
-from generator3.generator3 import process_one
+from .utils.logger import logger
+from .generator3.generator3 import process_one
 
 
 def is_namespace(something):
@@ -65,7 +65,7 @@ def iter_module(module_name, module, module_path=None, namespaces=None):
     if not namespaces:
         namespaces = {}
 
-    for submodule_name, submodule in vars(module).iteritems():
+    for submodule_name, submodule in vars(module).items():
         if not is_namespace(submodule):
             continue
         if module_path:
@@ -123,7 +123,7 @@ def delete_module(module_path):
 def dump_json_log(namespaces_dict):
     json_dir = os.path.join(os.getcwd(), 'logs')
     # now = str(time.time()).split('.')[0]
-    name = '-'.join(namespaces_dict.keys())
+    name = '-'.join(list(namespaces_dict.keys()))
     filepath = os.path.join(json_dir, '{}.json'.format(name))
     with open(filepath, 'w') as fp:
         json.dump(namespaces_dict, fp, indent=2)
@@ -151,20 +151,20 @@ def make(output_dir, assembly_or_builtin, overwrite=False, quiet=False):
     if not assembly_dict:
         raise Exception('No namspaces to process')
 
-    modules = [d.keys() for d in assembly_dict.values()]
+    modules = [list(d.keys()) for d in list(assembly_dict.values())]
     logger.info('Modules and Assemblies Loaded: {}'.format(modules))
     logger.debug( json.dumps(assembly_dict, indent=2, sort_keys=True))
 
-    if not quiet and raw_input('>>> Write Stubs ({}) [y/n] [n]:\n>>> '.format(output_dir)) != 'y':
+    if not quiet and input('>>> Write Stubs ({}) [y/n] [n]:\n>>> '.format(output_dir)) != 'y':
         logger.info('No Stubs Created')
     else:
-        for assembly, modules in assembly_dict.items():
-            for module_path in modules.keys():
+        for assembly, modules in list(assembly_dict.items()):
+            for module_path in list(modules.keys()):
                 if not stub_exists(output_dir, module_path) or overwrite:
                     create_stubs(output_dir, module_path)
                 else:
                     logger.info('Skipping [{}] Already Exists'.format(module_path))
-            for module_path in modules.keys():
+            for module_path in list(modules.keys()):
                 delete_module(module_path)
 
         logger.info('Stubs Created')

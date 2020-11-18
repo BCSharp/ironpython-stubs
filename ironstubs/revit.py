@@ -25,10 +25,10 @@ PROJECT_DIR = os.path.dirname(PKG_DIR)
 release_dir = os.path.join(PROJECT_DIR, 'release', STUBS_FOLDER)
 os.chdir(PROJECT_DIR)
 
-from utils.logger import logger
-from utils.helper import Timer
-from default_settings import PATHS, REVIT_ASSEMBLIES
-from make_stubs import make, dump_json_log
+from .utils.logger import logger
+from .utils.helper import Timer
+from .default_settings import PATHS, REVIT_ASSEMBLIES
+from .make_stubs import make, dump_json_log
 
 # Add Paths
 PATHS.append(os.path.join(PROJECT_DIR, 'bin'))

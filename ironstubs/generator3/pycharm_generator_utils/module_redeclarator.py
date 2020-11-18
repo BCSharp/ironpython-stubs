@@ -1,7 +1,7 @@
 import keyword
 
-from util_methods import *
-from constants import *
+from .util_methods import *
+from .constants import *
 
 
 class emptylistdict(dict):
@@ -333,7 +333,7 @@ class ModuleRedeclarator(object):
                     return None # TODO: maybe divinate a return type; see pygame.mixer.Channel
                 return attr
                 # adds no noticeable slowdown, I did measure. dch.
-            for im_name, im_module in self.imported_modules.items():
+            for im_name, im_module in list(self.imported_modules.items()):
                 cache_key = (im_name, attr)
                 cached = self.ret_type_cache.get(cache_key, None)
                 if cached:
@@ -667,7 +667,7 @@ class ModuleRedeclarator(object):
         try:
             if hasattr(p_class, "__dict__") and not inspect_dir:
                 field_source = p_class.__dict__
-                field_keys = field_source.keys() # Jython 2.5.1 _codecs fail here
+                field_keys = list(field_source.keys()) # Jython 2.5.1 _codecs fail here
             else:
                 field_keys = dir(p_class) # this includes unwanted inherited methods, but no dict + inheritance is rare
         except:
@@ -709,7 +709,7 @@ class ModuleRedeclarator(object):
 
         #
         seen_funcs = {}
-        for item_name in sorted_no_case(methods.keys()):
+        for item_name in sorted_no_case(list(methods.keys())):
             item = methods[item_name]
             try:
                 self.redo_function(out, item, item_name, indent + 1, p_class, p_modname, classname=p_name, seen=seen_funcs)
@@ -719,7 +719,7 @@ class ModuleRedeclarator(object):
         known_props = KNOWN_PROPS.get(p_modname, {})
         a_setter = "lambda self, v: None"
         a_deleter = "lambda self: None"
-        for item_name in sorted_no_case(properties.keys()):
+        for item_name in sorted_no_case(list(properties.keys())):
             item = properties[item_name]
             prop_docstring = getattr(item, '__doc__', None)
             prop_key = (p_name, item_name)
@@ -752,7 +752,7 @@ class ModuleRedeclarator(object):
         if properties:
             out(0, "") # empty line after the block
             #
-        for item_name in sorted_no_case(others.keys()):
+        for item_name in sorted_no_case(list(others.keys())):
             item = others[item_name]
             self.fmt_value(out, item, indent + 1, prefix=item_name + " = ")
         if p_name == "object":
@@ -797,7 +797,7 @@ class ModuleRedeclarator(object):
 
     def redo_imports(self):
         module_type = type(sys)
-        for item_name in self.module.__dict__.keys():
+        for item_name in list(self.module.__dict__.keys()):
             try:
                 item = self.module.__dict__[item_name]
             except:
@@ -933,7 +933,7 @@ class ModuleRedeclarator(object):
             prefix = "" # try to group variables by common prefix
             PREFIX_LEN = 2 # default prefix length if we can't guess better
             out(0, "# Variables with simple values")
-            for item_name in sorted_no_case(vars_simple.keys()):
+            for item_name in sorted_no_case(list(vars_simple.keys())):
                 if item_name in omitted_names:
                     out(0, "# definition of " + item_name + " omitted")
                     continue
@@ -967,7 +967,7 @@ class ModuleRedeclarator(object):
             out(0, "# functions")
             out(0, "")
             seen_funcs = {}
-            for item_name in sorted_no_case(funcs.keys()):
+            for item_name in sorted_no_case(list(funcs.keys())):
                 if item_name in omitted_names:
                     out(0, "# definition of ", item_name, " omitted")
                     continue
@@ -985,7 +985,7 @@ class ModuleRedeclarator(object):
             seen_classes = {}
             # sort classes so that inheritance order is preserved
             cls_list = [] # items are (class_name, mro_tuple)
-            for cls_name in sorted_no_case(classes.keys()):
+            for cls_name in sorted_no_case(list(classes.keys())):
                 cls = classes[cls_name]
                 ins_index = len(cls_list)
                 for i in range(ins_index):
@@ -1036,7 +1036,7 @@ class ModuleRedeclarator(object):
             out = self.footer_buf.out
             out(0, "# variables with complex values")
             out(0, "")
-            for item_name in sorted_no_case(vars_complex.keys()):
+            for item_name in sorted_no_case(list(vars_complex.keys())):
                 if item_name in omitted_names:
                     out(0, "# definition of " + item_name + " omitted")
                     continue
@@ -1070,7 +1070,7 @@ class ModuleRedeclarator(object):
         out = self.imports_buf.out
         if self.used_imports:
             self.add_import_header_if_needed()
-            for mod_name in sorted_no_case(self.used_imports.keys()):
+            for mod_name in sorted_no_case(list(self.used_imports.keys())):
                 import_names = self.used_imports[mod_name]
                 if import_names:
                     self._defined[mod_name] = True
@@ -1106,7 +1106,7 @@ class ModuleRedeclarator(object):
 
         if self.hidden_imports:
             self.add_import_header_if_needed()
-            for mod_name in sorted_no_case(self.hidden_imports.keys()):
+            for mod_name in sorted_no_case(list(self.hidden_imports.keys())):
                 out(0, 'import ', mod_name, ' as ', self.hidden_imports[mod_name])
             out(0, "") # empty line after group
 
