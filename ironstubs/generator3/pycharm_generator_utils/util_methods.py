@@ -349,11 +349,14 @@ def transform_seq(results, toplevel=True):
     """Transforms a tree of ParseResults into a param spec string."""
     is_clr = sys.platform == "cli"
     ret = [] # add here token to join
+    kwargs = None
     for token in results:
         token_type = token[0]
         if token_type is T_SIMPLE:
             token_name = token[1]
-            if len(token) == 3: # name with value
+            if token_name.startswith("**"): # kwargs, move to end
+                kwargs = sanitize_ident(token_name, is_clr)
+            elif len(token) == 3: # name with value
                 if toplevel:
                     ret.append(sanitize_ident(token_name, is_clr) + "=" + sanitize_value(token[2]))
                 else:
@@ -379,6 +382,8 @@ def transform_seq(results, toplevel=True):
             pass # this is handled elsewhere
         else:
             raise Exception("This cannot be a token type: " + repr(token_type))
+    if kwargs:
+        ret.append(kwargs)
     return ret
 
 
