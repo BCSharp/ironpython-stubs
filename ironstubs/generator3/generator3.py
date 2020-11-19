@@ -20,7 +20,7 @@ def redo_module(module_name, outfile, module_file_name, doing_builtins):
     # sys.modules
     mod = sys.modules.get(module_name)
     mod_path = module_name.split('.')
-    if not mod and sys.platform == 'cli':
+    if not mod and is_cli:
         # "import System.Collections" in IronPython 2.7 doesn't actually put System.Collections in sys.modules
         # instead, sys.modules['System'] get set to a Microsoft.Scripting.Actions.NamespaceTracker and Collections can be
         # accessed as its attribute
@@ -321,7 +321,7 @@ def process_one(name, mod_file_name, doing_builtins, subdir, quiet=False):
         args = name, CURRENT_ACTION, str(value)
         report(msg, *args)
         if debug_mode:
-            if sys.platform == 'cli':
+            if is_cli:
                 import traceback
                 traceback.print_exc(file=sys.stderr)
             raise
@@ -449,7 +449,7 @@ def get_help_text():
 #         else:
 #             mod_file_name = None
 
-#         if sys.platform == 'cli':
+#         if is_cli:
 #             #noinspection PyUnresolvedReferences
 #             import clr
 

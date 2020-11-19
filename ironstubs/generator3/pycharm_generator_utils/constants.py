@@ -15,6 +15,8 @@ version = (
     (sys.hexversion & (0xff << 16)) >> 16
 )
 
+is_cli = sys.implementation.name == 'ironpython'
+
 if version[0] >= 3:
     #noinspection PyUnresolvedReferences
     import builtins as the_builtins
@@ -175,7 +177,7 @@ if version[0] > 2:
 else:
     fopen = open
 
-if sys.platform == 'cli':
+if is_cli:
     #noinspection PyUnresolvedReferences
     from System import DateTime
 

@@ -221,7 +221,7 @@ class ModuleRedeclarator(object):
         if isinstance(p_value, SIMPLEST_TYPES):
             out(indent, prefix, reliable_repr(p_value), postfix)
         else:
-            if sys.platform == "cli":
+            if is_cli:
                 imported_name = None
             else:
                 imported_name = self.find_imported_name(p_value)
@@ -284,7 +284,7 @@ class ModuleRedeclarator(object):
                         out(indent, "}", postfix)
                 else: # something else, maybe representable
                     # look up this value in the module.
-                    if sys.platform == "cli":
+                    if is_cli:
                         out(indent, prefix, "None", postfix)
                         return
                     found_name = ""
@@ -533,7 +533,7 @@ class ModuleRedeclarator(object):
             spec, sig_note = restore_predefined_builtin(classname, p_name)
             out(indent, "def ", spec, ": # ", sig_note)
             out_doc_attr(out, p_func, indent + 1, p_class)
-        elif sys.platform == 'cli' and is_clr_type(p_class):
+        elif is_cli and is_clr_type(p_class):
             is_static, spec, sig_note = restore_clr(p_name, p_class)
             if is_static:
                 out(indent, "@staticmethod")
@@ -868,7 +868,7 @@ class ModuleRedeclarator(object):
             # unless we're adamantly positive that the name was imported, we assume it is defined here
             mod_name = None # module from which p_name might have been imported
             # IronPython has non-trivial reexports in System module, but not in others:
-            skip_modname = sys.platform == "cli" and p_name != "System"
+            skip_modname = is_cli and p_name != "System"
             surely_not_imported_mods = KNOWN_FAKE_REEXPORTERS.get(p_name, ())
             ## can't figure weirdness in some modules, assume no reexports:
             #skip_modname =  skip_modname or p_name in self.KNOWN_FAKE_REEXPORTERS
