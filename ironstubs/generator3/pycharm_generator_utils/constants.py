@@ -278,7 +278,10 @@ QUOTE = Suppress('"')
 SP = Suppress(Optional(White()))
 
 ident = Word(alphas + "_", alphanums + "_-.").setName("ident") # we accept things like "foo-or-bar"
-decorated_ident = ident + Optional(Suppress(SP + Literal(":") + SP + ident)) # accept "foo: bar", ignore "bar"
+type_list = Forward()
+type_spec = ident + Optional(type_list) # accept foo or foo[bar] or foo[bar, baz[gek]], etc.
+type_list << (lbrack + delimitedList(type_spec) + rbrack)
+decorated_ident = ident + Optional(Suppress(SP + Literal(":") + SP + type_spec)) # accept "foo: bar", ignore "bar"
 spaced_ident = Combine(decorated_ident + ZeroOrMore(Literal(' ') + decorated_ident)) # we accept 'list or tuple' or 'C struct'
 
 # allow quoted names, because __setattr__, etc docs use it
