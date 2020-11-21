@@ -1,5 +1,8 @@
-from .constants import *
+# pylint: disable=wildcard-import
+# pylint: disable=global-statement
+
 import keyword
+from .constants import *
 
 try:
     import inspect
@@ -286,12 +289,12 @@ def is_property(x):
     return isinstance(x, _prop_types)
 
 
-def sanitize_ident(x, is_cli=False):
+def sanitize_ident(x, is_cli_ident=False):
     """Takes an identifier and returns it sanitized"""
-    if x in ("class", "object", "def", "list", "tuple", "int", "float", "str", "unicode" "None"):
+    if x in ("class", "object", "def", "list", "tuple", "int", "float", "str", "unicode", "None", "del"):
         return "p_" + x
     else:
-        if is_cli:
+        if is_cli_ident:
             # it tends to have names like "int x", turn it to just x
             xs = x.split(" ")
             if len(xs) == 2:
@@ -499,8 +502,8 @@ def is_skipped_in_module(p_module, p_value):
 
 def restore_predefined_builtin(class_name, func_name):
     spec = func_name + PREDEFINED_BUILTIN_SIGS[(class_name, func_name)]
-    note = "known special case of " + (class_name and class_name + "." or "") + func_name
-    return (spec, note)
+    msg = "known special case of " + (class_name and class_name + "." or "") + func_name
+    return (spec, msg)
 
 def restore_by_inspect(p_func):
     """

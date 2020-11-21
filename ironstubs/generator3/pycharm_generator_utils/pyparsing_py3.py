@@ -98,8 +98,8 @@ Robert A. Clark
 _PY3K = sys.version_info[0] > 2
 if _PY3K:
     _MAX_INT = sys.maxsize
-    str = str
-    chr = chr
+    #str = str
+    #chr = chr
     _ustr = str
     _str2dict = set
     alphas = string.ascii_lowercase + string.ascii_uppercase

@@ -1,9 +1,12 @@
 import os
 import re
-import types
 import sys
 import string
 import time
+
+# pylint: disable=wildcard-import
+# pylint: disable=expression-not-assigned
+# pylint: disable=exec-used
 
 # !!! Don't forget to update VERSION and required_gen_version if necessary !!!
 VERSION = "1.145"
@@ -201,26 +204,26 @@ BUILTIN_MOD_NAME = the_builtins.__name__
 
 IDENT_PATTERN = "[A-Za-z_][0-9A-Za-z_]*" # re pattern for identifier
 NUM_IDENT_PATTERN = re.compile("([A-Za-z_]+)[0-9]?[A-Za-z_]*") # 'foo_123' -> $1 = 'foo_'
-STR_CHAR_PATTERN = "[0-9A-Za-z_.,\+\-&\*% ]"
+STR_CHAR_PATTERN = r"[0-9A-Za-z_.,\+\-&\*% ]"
 
-DOC_FUNC_RE = re.compile("(?:.*\.)?(\w+)\(([^\)]*)\).*") # $1 = function name, $2 = arglist
+DOC_FUNC_RE = re.compile(r"(?:.*\.)?(\w+)\(([^\)]*)\).*") # $1 = function name, $2 = arglist
 
-SANE_REPR_RE = re.compile(IDENT_PATTERN + "(?:\(.*\))?") # identifier with possible (...), go catches
+SANE_REPR_RE = re.compile(IDENT_PATTERN + r"(?:\(.*\))?") # identifier with possible (...), go catches
 
 IDENT_RE = re.compile("(" + IDENT_PATTERN + ")") # $1 = identifier
 
-STARS_IDENT_RE = re.compile("(\*?\*?" + IDENT_PATTERN + ")") # $1 = identifier, maybe with a * or **
+STARS_IDENT_RE = re.compile(r"(\*?\*?" + IDENT_PATTERN + ")") # $1 = identifier, maybe with a * or **
 
-IDENT_EQ_RE = re.compile("(" + IDENT_PATTERN + "\s*=)") # $1 = identifier with a following '='
+IDENT_EQ_RE = re.compile("(" + IDENT_PATTERN + r"\s*=)") # $1 = identifier with a following '='
 
 SIMPLE_VALUE_RE = re.compile(
-    "(\([+-]?[0-9](?:\s*,\s*[+-]?[0-9])*\))|" + # a numeric tuple, e.g. in pygame
-    "([+-]?[0-9]+\.?[0-9]*(?:[Ee]?[+-]?[0-9]+\.?[0-9]*)?)|" + # number
+    r"(\([+-]?[0-9](?:\s*,\s*[+-]?[0-9])*\))|" + # a numeric tuple, e.g. in pygame
+    r"([+-]?[0-9]+\.?[0-9]*(?:[Ee]?[+-]?[0-9]+\.?[0-9]*)?)|" + # number
     "('" + STR_CHAR_PATTERN + "*')|" + # single-quoted string
     '("' + STR_CHAR_PATTERN + '*")|' + # double-quoted string
-    "(\[\])|" +
-    "(\{\})|" +
-    "(\(\))|" +
+    r"(\[\])|" +
+    r"(\{\})|" +
+    r"(\(\))|" +
     "(True|False|None)"
 ) # $? = sane default value
 
@@ -542,9 +545,9 @@ PREDEFINED_MOD_CLASS_SIGS = {                                       #TODO: user-
 
 bin_collections_names = ['collections', '_collections']
 
-for name in bin_collections_names:
-    PREDEFINED_MOD_CLASS_SIGS[(name, "deque", "__init__")] = ("(self, iterable=(), maxlen=None)", None)
-    PREDEFINED_MOD_CLASS_SIGS[(name, "defaultdict", "__init__")] = ("(self, default_factory=None, **kwargs)", None)
+for bin_collections_name in bin_collections_names:
+    PREDEFINED_MOD_CLASS_SIGS[(bin_collections_name, "deque", "__init__")] = ("(self, iterable=(), maxlen=None)", None)
+    PREDEFINED_MOD_CLASS_SIGS[(bin_collections_name, "defaultdict", "__init__")] = ("(self, default_factory=None, **kwargs)", None)
 
 if version[0] < 3:
     PREDEFINED_MOD_CLASS_SIGS[("exceptions", "BaseException", "__unicode__")] = ("(self)", UNICODE_LIT)

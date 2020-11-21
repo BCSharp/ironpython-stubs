@@ -1,0 +1,30 @@
+{
+    "python.linting.pylintArgs": [
+        "--max-line-length=140",
+        // Disabled messages
+        //    Pointless
+        //       W0142 = *args and **kwargs support
+        //       W0403 = Relative imports
+        //       W0613 = Unused argument
+        //       W0232 = Class has no __init__ method
+        //       R0903 = Too few public methods
+        //       R0913 = Too many arguments
+        "--disable=C0103", // Invalid name
+        //       R0914 = Too many local variables
+        "--disable=W0702", // No exception type(s) specified
+        "--disable=C0321", // More than one statement on a single line
+        //
+        //    PyLint's module importation is unreliable
+        //       F0401 = Unable to import module
+        //       W0402 = Uses of a deprecated module
+        //       E1101 = Module x has no y member
+        //
+        //    Already an error when wildcard imports are used
+        "--disable=W0614", // Unused import from wildcard
+        //
+        //    Stricter messages that can be disabled until everything else has been fixed
+        "--disable=C0111", // Missing docstring
+        //       C0301 = Line too long
+        // http://pylint-messages.wikidot.com/all-codes
+    ],
+}
