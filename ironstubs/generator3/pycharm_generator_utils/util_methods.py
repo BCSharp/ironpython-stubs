@@ -635,7 +635,7 @@ if is_cli:
 def print_profile():
     data = []
     data.extend(clr.GetProfilerData())
-    data.sort(lambda x, y: -cmp(x.ExclusiveTime, y.ExclusiveTime))
+    data.sort(key=lambda x: x.ExclusiveTime, reverse=True)
 
     for pd in data:
         say('%s\t%d\t%d\t%d', pd.Name, pd.InclusiveTime, pd.ExclusiveTime, pd.Calls)
@@ -670,7 +670,8 @@ def restore_clr(p_name, p_class):
 
     parameter_lists = []
     for m in methods:
-        parameter_lists.append([p.Name for p in m.GetParameters()])
+        pl = [p.Name for p in m.GetParameters()]
+        parameter_lists.append(make_names_unique(pl)) # make_names_unique will handle Python keyword-souding names
     params = restore_parameters_for_overloads(parameter_lists)
     is_static = False
     if not methods[0].IsStatic:
