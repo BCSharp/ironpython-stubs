@@ -912,6 +912,17 @@ class ModuleRedeclarator(object):
                     if item_name not in import_list:
                         import_list.append(item_name)
             if not want_to_import:
+                if type(item).__name__ == 'type-collision':
+                    # try to specialize
+                    for arity in range(5):
+                        try:
+                            item = item[(object,) * arity]
+                            break
+                        except SystemError:
+                            pass
+                    else:
+                        report('cannot specialize %r, skipping...', item)
+                        continue
                 if isinstance(item, type) or type(item).__name__ == 'classobj':
                     classes[item_name] = item
                 elif is_callable(item): # some classes are callable, check them before functions
