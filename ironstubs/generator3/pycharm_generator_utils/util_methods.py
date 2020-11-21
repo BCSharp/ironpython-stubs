@@ -230,6 +230,9 @@ def get_bases(a_class): # TODO: test for classes that don't fit this scheme
     else:
         return ()
 
+def strip_generic_params(type_name):
+    pos = type_name.find('[')
+    return type_name[:pos] if pos >= 0 else type_name
 
 def is_callable(x):
     return hasattr(x, '__call__')

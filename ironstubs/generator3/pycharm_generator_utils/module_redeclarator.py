@@ -628,26 +628,36 @@ class ModuleRedeclarator(object):
             skip_qualifiers.extend(KNOWN_FAKE_REEXPORTERS.get(p_modname, ()))
             bases_list = [] # what we'll render in the class decl
             for base in bases:
+                # if base == object: # 'object' is implicit but doesn't hurt to add
+                #     skipped_bases.append(str(base))
+                #     continue
                 if [1 for (cls, mdl) in KNOWN_FAKE_BASES if cls == base and mdl != self.module]:
                     # our base is a wrapper and our module is not its defining module
                     skipped_bases.append(str(base))
                     continue
                     # somehow import every base class
-                base_name = base.__name__
+                base_name = strip_generic_params(base.__name__)
                 qual_module_name = qualifier_of(base, skip_qualifiers)
                 got_existing_import = False
                 if qual_module_name:
                     if qual_module_name in self.used_imports:
                         import_list = self.used_imports[qual_module_name]
                         if base in import_list:
-                            bases_list.append(base_name) # unqualified: already set to import
+                            if base_name not in bases_list:
+                                bases_list.append(base_name) # unqualified: already set to import
                             got_existing_import = True
                     if not got_existing_import:
                         mangled_qualifier = "__" + qual_module_name.replace('.', '_') # foo.bar -> __foo_bar
-                        bases_list.append(mangled_qualifier + "." + base_name)
+                        mangled_base_name = mangled_qualifier + "." + base_name
+                        if mangled_base_name not in bases_list:
+                            bases_list.append(mangled_base_name)
                         self.hidden_imports[qual_module_name] = mangled_qualifier
                 else:
-                    bases_list.append(base_name)
+                    if base_name.startswith("_"):
+                        skipped_bases.append(base_name)
+                    else:
+                        if base_name not in bases_list:
+                            bases_list.append(base_name)
             base_def = "(" + ", ".join(bases_list) + ")"
 
             if self.split_modules:
