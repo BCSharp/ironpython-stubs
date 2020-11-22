@@ -465,7 +465,7 @@ def has_item_starting_with(p_seq, p_start):
 
 def out_docstring(out_func, docstring, indent):
     if not isinstance(docstring, str): return
-    lines = docstring.strip().split("\n")
+    lines = docstring.strip().replace("\r\n", "\n").split("\n")
     if lines:
         if len(lines) == 1:
             out_func(indent, '""" ' + lines[0] + ' """')
@@ -570,7 +570,11 @@ def propose_first_param(deco):
     return None
 
 def qualifier_of(cls, qualifiers_to_skip):
-    m = getattr(cls, "__module__", None)
+    m = getattr(cls, "__clr_assembly__", None)
+    if m:
+        m = m[:m.find(' in ')]
+    else:
+        m = getattr(cls, "__module__", None)
     if m in qualifiers_to_skip:
         return ""
     return m
@@ -663,7 +667,7 @@ def restore_clr(p_name, p_class):
     if p_name == '__new__':
         methods = [c for c in clr_type.GetConstructors()]
         if not methods:
-            return False, p_name + '(self, *args)', 'cannot find CLR constructor' # "self" is always first argument of any non-static method
+            return False, p_name + '(cls, *args)', 'cannot find CLR constructor' # "cls" is always first argument __new__ method
     else:
         methods = [m for m in clr_type.GetMethods() if m.Name == p_name]
         if not methods:
@@ -681,7 +685,10 @@ def restore_clr(p_name, p_class):
     params = restore_parameters_for_overloads(parameter_lists)
     is_static = False
     if not methods[0].IsStatic:
-        params = ['self'] + params
+        if p_name == '__new__':
+            params = ['cls'] + params
+        else:
+            params = ['self'] + params
     else:
         is_static = True
     return is_static, build_signature(p_name, params), None
