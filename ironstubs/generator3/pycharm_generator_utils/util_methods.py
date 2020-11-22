@@ -216,7 +216,7 @@ def _searchbases(cls, accum):
 def get_mro(a_class):
     # logic copied from inspect.py
     """Returns a tuple of MRO classes."""
-    if hasattr(a_class, "__mro__"):
+    if not is_cli and hasattr(a_class, "__mro__"):
         return a_class.__mro__
     elif hasattr(a_class, "__bases__"):
         bases = []

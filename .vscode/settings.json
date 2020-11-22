@@ -24,7 +24,16 @@
         //
         //    Stricter messages that can be disabled until everything else has been fixed
         "--disable=C0111", // Missing docstring
-        //       C0301 = Line too long
+        "--disable=C0301", // Line too long
+        //
+        // Generated modules are not-pylint compliant
+        "--disable=trailing-whitespace",
+        "--disable=unnecessary-pass",
+        "--disable=trailing-newlines",
+        "--disable=too-many-lines",
+        "--disable=super-init-not-called",
+        "--disable=redefined-builtin",
+        "--disable=arguments-differ",
         // http://pylint-messages.wikidot.com/all-codes
     ],
 }
